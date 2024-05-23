@@ -20,7 +20,8 @@ umi.use(signerIdentity(signer));
 (async () => {
   try {
     //1. Load image
-    const file = "./generug.png";
+    const file =
+      "/Users/murat/Desktop/Murat_Sol_2Q24/Class_code/solana-starter/ts/cluster1/generug.png";
     const buffer = await readFile(file);
     //2. Convert image to generic file.
     const image = createGenericFile(buffer, "generug.png");
