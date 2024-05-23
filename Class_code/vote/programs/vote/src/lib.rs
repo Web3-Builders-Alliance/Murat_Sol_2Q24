@@ -7,7 +7,9 @@ pub mod vote {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>, _url: String) -> Result<()> {
-        ctx.accounts.initialize();
+        ctx.accounts.initialize(&ctx.bumps)?;
+
+        Ok(())
     }
 
     pub fn upvote(ctx: Context<Vote>, _url: String) -> Result<()> {
@@ -18,6 +20,8 @@ pub mod vote {
         Ok(())
     }
 }
+
+// -----------------------------------------------
 
 #[derive(Accounts)]
 #[instruction(_url: String)]
@@ -43,6 +47,34 @@ impl<'info> Initialize<'info> {
     }
 }
 
+// -----------------
+
+#[derive(Accounts)]
+#[instruction(_url: String)]
+pub struct Vote<'info> {
+    #[account(
+        mut,
+        seeds = [_url.as_bytes().as_ref()],
+        bump = vote_account.bump
+    )]
+    pub vote_account:Account<'info, VoteState>
+}
+
+impl<'info> Vote<'info> {
+    pub fn upvote(&mut self) -> Result<()> {
+        self.vote_account.score += 1;
+
+        Ok(())
+    }
+
+    pub fn downvote(&mut self) -> Result<()> {
+        self.vote_account.score -= 1;
+
+        Ok(())
+    }
+}
+
+// --------------------
 
 #[account]
 pub struct VoteState {
