@@ -36,4 +36,26 @@ describe("vault", () => {
       await provider.connection.getAccountInfo(vault)
     );
   });
+
+  it("deposit 2 SOL", async () => {
+    const tx = await program.methods
+      .deposit(new anchor.BN(2 * anchor.web3.LAMPORTS_PER_SOL))
+      .accounts({
+        user: provider.wallet.publicKey,
+        vaultState,
+        vault,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    console.log("your transaction signature", tx);
+    console.log(
+      "your vault info",
+      await provider.connection.getAccountInfo(vault)
+    );
+    console.log(
+      "your vault balance",
+      (await provider.connection.getBalance(vault)).toString()
+    );
+  });
 });
