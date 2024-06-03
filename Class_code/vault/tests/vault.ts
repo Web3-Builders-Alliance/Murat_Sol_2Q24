@@ -58,4 +58,22 @@ describe("vault", () => {
       (await provider.connection.getBalance(vault)).toString()
     );
   });
+
+  it("withdraw 1 SOL", async () => {
+    const tx = await program.methods
+      .withdraw(new anchor.BN(1 * anchor.web3.LAMPORTS_PER_SOL))
+      .accounts({
+        user: provider.wallet.publicKey,
+        vaultState,
+        vault,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    console.log("your transaction signature", tx);
+    console.log(
+      "your vault balance",
+      (await provider.connection.getBalance(vault)).toString()
+    );
+  });
 });
