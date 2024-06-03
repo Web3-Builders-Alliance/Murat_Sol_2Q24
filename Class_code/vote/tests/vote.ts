@@ -4,7 +4,8 @@ import { Vote } from "../target/types/vote";
 
 describe("vote", () => {
   // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
   const program = anchor.workspace.Vote as Program<Vote>;
 
@@ -19,8 +20,8 @@ describe("vote", () => {
     // Add your test here.
     const tx = await program.methods
       .initialize(url)
-      .accountsPartial({
-        payer: getProvider.wallet.publicKey,
+      .accounts({
+        payer: provider.wallet.publicKey,
         voteAccount,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
@@ -28,17 +29,17 @@ describe("vote", () => {
     console.log("Your transaction signature", tx);
 
     let voteState = await program.account.voteState.fetch(voteAccount);
-    console.log("\nyour vote score is", voteState.score.toString());
+    console.log("\nYour vote score is", voteState.score.toString());
   });
 
-  it("upvote", async () => {
+  it("Upvote!", async () => {
     const tx = await program.methods
       .upvote(url)
       .accounts({
         voteAccount,
       })
       .rpc();
-    console.log("your signature is", tx);
+    console.log("Your transaction signature", tx);
 
     let voteState = await program.account.voteState.fetch(voteAccount);
     console.log("\nYour vote score is", voteState.score.toString());
