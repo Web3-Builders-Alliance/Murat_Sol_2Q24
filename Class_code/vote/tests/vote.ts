@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { Vote } from "../target/types/vote";
+import { Vote } from "../target/types/vote_program";
 
 describe("vote", () => {
   // Configure the client to use the local cluster.

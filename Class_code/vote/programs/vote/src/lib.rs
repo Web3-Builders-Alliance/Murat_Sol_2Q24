@@ -13,10 +13,12 @@ pub mod vote {
     }
 
     pub fn upvote(ctx: Context<Vote>, _url: String) -> Result<()> {
+        ctx.accounts.upvote()?;
         Ok(())
     }
 
     pub fn downvote(ctx: Context<Vote>, _url: String) -> Result<()> {
+        ctx.accounts.downvote()?;
         Ok(())
     }
 }
@@ -57,7 +59,7 @@ pub struct Vote<'info> {
         seeds = [_url.as_bytes().as_ref()],
         bump = vote_account.bump
     )]
-    pub vote_account:Account<'info, VoteState>
+    pub vote_account: Account<'info, VoteState>
 }
 
 impl<'info> Vote<'info> {
