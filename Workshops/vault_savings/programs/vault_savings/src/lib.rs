@@ -57,6 +57,46 @@ impl<'info> Initialize<'info> {
     }
 }
 
+#[derive(Accounts)]
+pub struct Operations<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+    #[account(
+        mut,
+        seeds = [b"vault".as_ref(), state.key().as_ref()],
+        bump = state.vault_bump
+    )]
+    pub vault: SystemAccount<'info>,
+    #[account(
+        seeds = [b"state".as_ref(), user.key().as_ref()],
+        bump = state.state_bump
+    )]
+    pub state: Account<'info, VaultState>,
+    pub system_program: Program<'info, System>
+}
+
+impl<'info> Operations<'info> {
+    pub fn deposit(&mut self, amount: u64) -> Result<()> {
+
+        let cpi_program = self.system_program.to_account_info();
+
+        let cpi_accounts = Transfer {
+            from: self.user.to_account_info(),
+            to: self.vault.to_account_info()
+        };
+
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+        transfer(cpi_ctx, amount)?;
+
+        self.check_balance()?;
+
+        Ok(())
+    }
+
+    pub fn check_balance(&mut self) -> Result<()> {}
+}
+
 
 
 // -----------------------------
