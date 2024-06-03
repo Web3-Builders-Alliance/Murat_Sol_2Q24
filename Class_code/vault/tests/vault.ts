@@ -76,4 +76,22 @@ describe("vault", () => {
       (await provider.connection.getBalance(vault)).toString()
     );
   });
+
+  it("close vault", async () => {
+    const tx = await program.methods
+      .close()
+      .accounts({
+        user: provider.wallet.publicKey,
+        vaultState,
+        vault,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    console.log("your transaction signature", tx);
+    console.log(
+      "your vault info",
+      await provider.connection.getAccountInfo(vault)
+    );
+  });
 });
