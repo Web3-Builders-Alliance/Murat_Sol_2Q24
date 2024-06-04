@@ -94,7 +94,32 @@ impl<'info> Operations<'info> {
         Ok(())
     }
 
-    pub fn check_balance(&mut self) -> Result<()> {}
+    pub fn check_balance(&mut self) -> Result<()> {
+        if self.vault.lamports() >= self.state.amount {
+            let cpi_program = self.system_program.to_account_info();
+
+            let cpi_accounts = Transfer {
+                from: self.vault.to_account_info(),
+                to: self.user.to_account_info()
+            };
+
+            let seeds = &[
+                b"vault".as_ref(),
+                self.state.to_account_info().key.as_ref(),
+                &[self.state.vault_bump],
+            ];
+
+            let signer_seeds = &[&seeds[..]];
+
+            let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
+
+            transfer(cpi_ctx, self.vault.lamports())?;
+
+            self.state.close(self.user.to_account_info());
+        }
+
+        Ok(())
+    }
 }
 
 
