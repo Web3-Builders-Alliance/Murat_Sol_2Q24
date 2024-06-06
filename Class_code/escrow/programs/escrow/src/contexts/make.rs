@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token::{transfer, Mint, Token, TokenAccount, Transfer}};
+use anchor_spl::{associated_token::AssociatedToken, token::{transfer, Mint, Token, TokenAccount, Transfer}, token_2022::spl_token_2022::extension::confidential_transfer::instruction};
 
 use crate::state::Escrow;
 
@@ -13,25 +13,25 @@ pub struct Make<'info> {
     #[account(
         init,
         payer = maker,
-        seeds = [b"escrow", maker.key().as_ref(), seed.to_le_bytes().as_ref],
+        seeds = [b"escrow", maker.key().as_ref(), seed.to_le_bytes().as_ref()],
         bump,
         space = Escrow::INIT_SPACE
     )]
     pub escrow: Account<'info, Escrow>,
     #[account(
         mut,
-        associated_token::Mint = mint_a,
+        associated_token::mint = mint_a,
         associated_token::authority = maker,
     )]
-    pub maker_ata: Account<'info, TokenAccount>,
+    pub maker_ata: Account<'info, TokenAccount>
     #[account(
         init,
         payer = maker,
         associated_token::mint = mint_a,
-        associated_token::authority = escrow,
+        associated_token::authority = escrow
     )]
     pub vault:Account<'info, TokenAccount>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
-    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub associated_token_program: Program<'info, AssociatedToken>
 }
