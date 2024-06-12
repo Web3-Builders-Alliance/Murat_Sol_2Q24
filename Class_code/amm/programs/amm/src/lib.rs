@@ -44,6 +44,3 @@ pub mod amm {
         Ok(())
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
