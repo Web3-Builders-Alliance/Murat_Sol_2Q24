@@ -44,3 +44,17 @@ pub struct Initialize<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>
 }
+
+impl<'info> Initialize<'info> {
+    pub fn init(
+        &mut self,
+        bumps: &InitializeBumps,
+        seed: u64,
+        fee: u16,
+        authority: Option<Pubkey>
+    ) -> Result<()> {
+        require!(fee <= 10000, AmmError::FeePercentErr);
+        self.config.init(seed, authority, self.mint_x.key(), self.mint_y.key(), fee, bumps.auth, bumps.config);
+        Ok(())
+    }
+}
