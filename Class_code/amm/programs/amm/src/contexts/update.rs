@@ -14,3 +14,21 @@ pub struct Update<'info> {
     )]
     pub config: Account<'info, Config>,
 }
+
+impl<'info> Update<'info> {
+    pub fn lock(
+        &mut self
+    ) -> Result<()> {
+        has_update_authority!(self);
+        self.config.locked = true;
+        Ok(())
+    }
+
+    pub fn unlock(
+        &mut self
+    ) -> Result<()> {
+        has_update_authority!(self);
+        self.config.locked = false;
+        Ok(())
+    }
+}
